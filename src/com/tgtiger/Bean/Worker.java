@@ -1,12 +1,25 @@
 package com.tgtiger.Bean;
 
-public class User {
+import java.sql.Date;
+
+public class Worker {
     //员工表
     //员工号，手机号作为注册账号，密码，注册时期
     private String workerNo;
+    private String name;
     private String password;
     private String phone;
-    private String dateSignUp;
+    private Date dateSignUp;
+    private int level;
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getWorkerNo() {
         return workerNo;
@@ -32,11 +45,19 @@ public class User {
         this.phone = phone;
     }
 
-    public String getDateSignUp() {
-        return dateSignUp;
+
+    public int getLevel() {
+        return level;
     }
 
-    public void setDateSignUp(String dateSignUp) {
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public Date getDateSignUp() {
+        return dateSignUp;
+    }
+    public void setDateSignUp(Date dateSignUp) {
         this.dateSignUp = dateSignUp;
     }
 }
