@@ -1,7 +1,7 @@
 package com.tgtiger.Bean;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
 
 //java.text.DecimalFormat   df   =new   java.text.DecimalFormat("#.00");
 //df.format(你要格式化的数字);

@@ -29,7 +29,7 @@ public class WorkerDaoImpl implements WorkerDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.printf("检索用户失败");
+            System.out.println("检索用户失败");
             return false;
         } finally {
             DBUtil.closeAll(rs, pstmt, conn);
@@ -37,29 +37,9 @@ public class WorkerDaoImpl implements WorkerDao {
     }
 
     @Override
-    public boolean addUsers(Worker worker) {
+    public boolean addWorkers(Worker worker, int level) {
         //Worker(Phone,Password)
-        String sql = "INSERT INTO worker(workerNo, phone, password, level, date_sign_up) VALUES(?,?,?,2,?);";
-
-        try {
-            conn = DBUtil.getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, genWorkerNo() );
-            pstmt.setString(2, worker.getPhone());
-            pstmt.setString(3, worker.getPassword());
-            java.util.Date d = new java.util.Date();
-            pstmt.setDate(4,new java.sql.Date(d.getTime()));
-            pstmt.execute();
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override
-    public boolean addAdmins(Worker worker) {
-        String sql = "INSERT INTO worker(workerNo, phone, password, level, date_sign_up) VALUES(?,?,?,1,?);";
+        String sql = "INSERT INTO worker(worker_number, phone, password, level, date_sign_up) VALUES(?,?,?,?,?);";
 
         try {
             conn = DBUtil.getConnection();
@@ -67,8 +47,9 @@ public class WorkerDaoImpl implements WorkerDao {
             pstmt.setString(1, genWorkerNo());
             pstmt.setString(2, worker.getPhone());
             pstmt.setString(3, worker.getPassword());
+            pstmt.setInt(4, level);
             java.util.Date d = new java.util.Date();
-            pstmt.setDate(4,new java.sql.Date(d.getTime()));
+            pstmt.setDate(5, new java.sql.Date(d.getTime()));
             pstmt.execute();
             return true;
         } catch (SQLException e) {
@@ -76,6 +57,8 @@ public class WorkerDaoImpl implements WorkerDao {
             return false;
         }
     }
+
+
 
     @Override
     public String getPasswd(String phone) {
@@ -100,9 +83,9 @@ public class WorkerDaoImpl implements WorkerDao {
     @Override
     public Worker getWorkerInfo(String phone) {
         String password = null;
-        String sql = "SELECT phone,name,level,number_worker,date_sign_up FROM worker WHERE phone = ?";
-        Worker worker = new Worker();
+        String sql = "SELECT phone,name,level,worker_number,date_sign_up FROM worker WHERE phone = ?";
         try {
+            Worker worker = new Worker();
             conn = DBUtil.getConnection();
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, phone);
@@ -113,19 +96,20 @@ public class WorkerDaoImpl implements WorkerDao {
             worker.setLevel(rs.getInt(3));
             worker.setWorkerNo(rs.getString(4));
             worker.setDateSignUp(rs.getDate(5));
+            return worker;
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         } finally {
             DBUtil.closeAll(rs, pstmt, conn);
         }
-        return worker;
     }
 
     @Override
     public int getLevel(String phone) {
         int level = -1;
+        String sql = "SELECT level from worker WHERE phone = ?";
         try {
-            String sql = "SELECT level from worker WHERE phone = ?";
             conn = DBUtil.getConnection();
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, phone);

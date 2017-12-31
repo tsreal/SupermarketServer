@@ -5,9 +5,9 @@ import com.tgtiger.Bean.Worker;
 public interface WorkerDao {
     boolean usrExist(String phone);
 
-    boolean addUsers(Worker worker);
+    boolean addWorkers(Worker worker, int level);
 
-    boolean addAdmins(Worker worker);
+//    boolean addAdmins(Worker worker);
 
 //    boolean updatePassword(String phone, String password);
 
