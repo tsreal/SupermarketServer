@@ -6,12 +6,13 @@ import java.util.List;
 
 public interface ProductDao {
     //商品添加
-    boolean addProduct(Product product);
+    Product addProduct(Product product);
 
     //商品删除
     //boolean deleteProduct(String name);
     //商品购买扫码查询
     Product getProduct(String barcode);
+
 
     List<Product> getFullProduct();
 

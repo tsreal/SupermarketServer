@@ -15,7 +15,7 @@ public interface WorkerDao {
 
 //    ArrayList<Worker> getAllAdmins(String expstationnum);
 
-    String getPasswd(String phone);
+    String getPassword(String phone);
 
     Worker getWorkerInfo(String phone);
 

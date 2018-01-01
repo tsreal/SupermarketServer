@@ -3,6 +3,7 @@ package com.tgtiger.Dao;
 import com.tgtiger.Bean.Worker;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 
 public class WorkerDaoImpl implements WorkerDao {
 
@@ -36,6 +37,7 @@ public class WorkerDaoImpl implements WorkerDao {
         }
     }
 
+    //level默认为2，代表收银员
     @Override
     public boolean addWorkers(Worker worker, int level) {
         //Worker(Phone,Password)
@@ -61,10 +63,9 @@ public class WorkerDaoImpl implements WorkerDao {
 
 
     @Override
-    public String getPasswd(String phone) {
-        //返回-1说明未查询到
+    public String getPassword(String phone) {
         String sql = "SELECT password FROM worker WHERE phone = ?";
-        String password = null;
+        String password;
         try {
             conn = DBUtil.getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -72,12 +73,14 @@ public class WorkerDaoImpl implements WorkerDao {
             rs = pstmt.executeQuery();
             rs.next();
             password = rs.getString(1);
+            return password ;
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("getPassword(String phone) error");
+            return null;
         } finally {
             DBUtil.closeAll(rs, pstmt, conn);
         }
-        return password;
     }
 
     @Override
@@ -95,7 +98,8 @@ public class WorkerDaoImpl implements WorkerDao {
             worker.setName(rs.getString(2));
             worker.setLevel(rs.getInt(3));
             worker.setWorkerNo(rs.getString(4));
-            worker.setDateSignUp(rs.getDate(5));
+            SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
+            worker.setDateSignUp(format.format(rs.getDate(5)));
             return worker;
         } catch (SQLException e) {
             e.printStackTrace();

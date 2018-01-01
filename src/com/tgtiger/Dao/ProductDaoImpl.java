@@ -2,7 +2,10 @@ package com.tgtiger.Dao;
 
 import com.tgtiger.Bean.Product;
 
+import java.math.BigDecimal;
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +14,9 @@ public class ProductDaoImpl implements ProductDao {
     private PreparedStatement pstmt = null;
     private ResultSet rs = null;
     @Override
-    public boolean addProduct(Product product) {
+    public Product addProduct(Product product) {
+
+        product.setYes(0);
 
         String sql = "INSERT INTO product(state, bar_code, name, price_lowest, " +
                 "price_sale, discount, time_expire, time_produce, type_product, " +
@@ -23,30 +28,37 @@ public class ProductDaoImpl implements ProductDao {
             pstmt.setInt(1,product.getState());
             //barCode
             System.out.println("barcode:" + genBarCodes());
-            pstmt.setString(2,genBarCodes());
+            String barcode = genBarCodes();
+            product.setBarCode(barcode);
+            pstmt.setString(2,barcode);
             //name
             pstmt.setString(3,product.getName());
             //priceLowest
-            pstmt.setBigDecimal(4,product.getPriceLowest());
+            pstmt.setBigDecimal(4,new BigDecimal(product.getPriceLowest()));
             //priceSale
-            pstmt.setBigDecimal(5,product.getPriceSale());
+            pstmt.setBigDecimal(5,new BigDecimal(product.getPriceSale()));
             //discount
-            pstmt.setBigDecimal(6,product.getDiscount());
+            pstmt.setBigDecimal(6,new BigDecimal(product.getDiscount()));
             //timeExpire
-            pstmt.setDate(7,new java.sql.Date(product.getTimeExpire().getTime()));
+            //格式转换
+            SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
+            pstmt.setDate(7,new java.sql.Date(format.parse(product.getTimeExpire()).getTime()));
             //timeProduce
-            pstmt.setDate(8,new java.sql.Date((product.getTimeProduce().getTime())));
+            pstmt.setDate(8,new java.sql.Date(format.parse(product.getTimeProduce()).getTime()));
             //type
             pstmt.setString(9,product.getType());
             //provider
-            pstmt.setString(10,product.getProvicer());
+            pstmt.setString(10,product.getProvider());
             //producer
             pstmt.setString(11,product.getProducer());
             pstmt.execute();
-            return true;
-        } catch (SQLException e) {
+            product.setYes(1);
+            return product;
+        } catch (SQLException | ParseException e) {
             e.printStackTrace();
-            return false;
+            product.setYes(0);
+            System.out.println("addProduct(Product product) error");
+            return null;
         } finally {
             DBUtil.closeAll(rs,pstmt,conn);
         }
@@ -67,13 +79,13 @@ public class ProductDaoImpl implements ProductDao {
             product.setState(rs.getInt(rs.getInt(1)));
             product.setBarCode(barcode);
             product.setName(rs.getString(2));
-            product.setPriceSale(rs.getBigDecimal(3));
-            product.setDiscount(rs.getBigDecimal(4));
+            product.setPriceSale(String.valueOf(rs.getBigDecimal(3)));
+            product.setDiscount(String.valueOf(rs.getBigDecimal(4)));
 //        product.setPriceLowest();
 //        product.setTimeExpire();
 //        product.setTimeProduce();
 //        product.setType();
-//        product.setProvicer();
+//        product.setProvider();
 //        product.setProducer();
             return product;
         } catch (SQLException e) {
@@ -99,13 +111,14 @@ public class ProductDaoImpl implements ProductDao {
                 product.setState(rs.getInt(rs.getInt(2)));
                 product.setBarCode(rs.getString(3));
                 product.setName(rs.getString(4));
-                product.setPriceLowest(rs.getBigDecimal(5));
-                product.setPriceSale(rs.getBigDecimal(6));
-                product.setDiscount(rs.getBigDecimal(7));
-                product.setTimeExpire(rs.getDate(8));
-                product.setTimeProduce(rs.getDate(9));
+                SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
+                product.setPriceLowest(String.valueOf(rs.getBigDecimal(5)));
+                product.setPriceSale(String.valueOf(rs.getBigDecimal(6)));
+                product.setDiscount(String.valueOf(rs.getBigDecimal(7)));
+                product.setTimeExpire(format.format(rs.getDate(8)));
+                product.setTimeProduce(format.format(rs.getDate(9)));
                 product.setType(rs.getString(10));
-                product.setProvicer(rs.getString(11));
+                product.setProvider(rs.getString(11));
                 product.setProducer(rs.getString(12));
                 list.add(product);
             }
