@@ -19,6 +19,10 @@ public class Statement {
     private int totalNo;
     //该商品毛收入
     private double income;
+    /**
+     * name : 雪碧
+     */
+    private String name;
 
     public String getBarCode() {
         return barCode;
@@ -82,5 +86,13 @@ public class Statement {
 
     public void setIncome(double income) {
         this.income = income;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 }

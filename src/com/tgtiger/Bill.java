@@ -2,6 +2,7 @@ package com.tgtiger;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.tgtiger.Dao.StatementDaoImpl;
 import org.apache.commons.io.IOUtils;
 
 import javax.servlet.ServletException;
@@ -30,16 +31,38 @@ public class Bill extends HttpServlet {
         }
          */
 
+        JSONObject json = new JSONObject();
         String receive = IOUtils.toString(req.getInputStream(), "UTF-8");
-        Bill bills_rec = JSON.parseObject(receive, Bill.class);
+        com.tgtiger.Bean.Bill bills_rec = JSON.parseObject(receive, com.tgtiger.Bean.Bill.class);
+        int i = new StatementDaoImpl().getBill(bills_rec);
+        if (i == 0) {
 
+            json.put("task", true);
+            json.put("status", 0);
+        } else if (i == 1) {
+            json.put("task", false);
+            json.put("status", 1);
+            json.put("info","error1: update statement vip error");
+        } else if (i == 2) {
+            json.put("task", false);
+            json.put("status", 2);
+            json.put("info","error2: update statement normal error");
+        } else if (i == 3) {
+            json.put("task", false);
+            json.put("status", 3);
+            json.put("info","error3: insert statement error");
+        } else if (i == 4) {
+            json.put("task", false);
+            json.put("status", 4);
+            json.put("info","error4: update depository error");
 
-
-
-
-        out.print("a");
+        } else {
+            json.put("task", false);
+            json.put("status", 5);
+            json.put("info","检查代码");
+        }
+        out.print(json.toString());
         out.flush();
         out.close();
-
     }
 }

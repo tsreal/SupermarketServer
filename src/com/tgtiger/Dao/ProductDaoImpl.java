@@ -99,6 +99,31 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
+    public int productExist(String barcode) {
+        String sql = "SELECT count(*) FROM product WHERE bar_code = ?;";
+        try {
+            conn = DBUtil.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, barcode);
+            rs = pstmt.executeQuery();
+            rs.next();
+            if (rs.getInt(1) == 1) {
+                System.out.println("商品存在");
+                return 1;
+            } else {
+                System.out.println("商品不存在，请检查输入的条形码");
+                return 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("检索库失败");
+            return 2;
+        } finally {
+            DBUtil.closeAll(rs, pstmt, conn);
+        }
+    }
+
+    @Override
     public List<Product> getFullProduct() {
         ArrayList<Product> list = new ArrayList<>();
         String sql = "SELECT * FROM product";
@@ -111,7 +136,7 @@ public class ProductDaoImpl implements ProductDao {
                 product.setState(rs.getInt(rs.getInt(2)));
                 product.setBarCode(rs.getString(3));
                 product.setName(rs.getString(4));
-                SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 product.setPriceLowest(String.valueOf(rs.getBigDecimal(5)));
                 product.setPriceSale(String.valueOf(rs.getBigDecimal(6)));
                 product.setDiscount(String.valueOf(rs.getBigDecimal(7)));

@@ -13,6 +13,8 @@ public interface ProductDao {
     //商品购买扫码查询
     Product getProduct(String barcode);
 
+    int productExist(String barcode);
+
 
     List<Product> getFullProduct();
 
