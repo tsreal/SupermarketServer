@@ -1,5 +1,7 @@
 package com.tgtiger.Dao;
 
+import com.alibaba.fastjson.JSONObject;
+import com.tgtiger.Bean.DepositoryList;
 import com.tgtiger.Bean.Product;
 
 import java.math.BigDecimal;
@@ -13,6 +15,30 @@ public class ProductDaoImpl implements ProductDao {
     private Connection conn = null;
     private PreparedStatement pstmt = null;
     private ResultSet rs = null;
+
+    public static void main(String[] args) {
+        Product product = new Product();
+        product.setBarCode("20182342");
+        product.setName("方便面");
+        product.setType("食品");
+        product.setDiscount("9.5");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("product", product);
+        jsonObject.put("info","用来测试");
+        jsonObject.put("task", true);
+        System.out.println(jsonObject.toString());
+
+        Product product1 = jsonObject.getObject("product",product.getClass());
+        System.out.println(product1.getName());
+
+//        JSONObject product_json = JSON.parseObject(jsonObject.getString("product"));
+//        System.out.println(product_json.toString());
+
+
+
+    }
+
+
     @Override
     public Product addProduct(Product product) {
 
@@ -41,7 +67,7 @@ public class ProductDaoImpl implements ProductDao {
             pstmt.setBigDecimal(6,new BigDecimal(product.getDiscount()));
             //timeExpire
             //格式转换
-            SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             pstmt.setDate(7,new java.sql.Date(format.parse(product.getTimeExpire()).getTime()));
             //timeProduce
             pstmt.setDate(8,new java.sql.Date(format.parse(product.getTimeProduce()).getTime()));
@@ -73,10 +99,11 @@ public class ProductDaoImpl implements ProductDao {
             conn = DBUtil.getConnection();
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, barcode);
+            System.out.println(barcode);
             rs = pstmt.executeQuery();
             rs.next();
             Product product = new Product();
-            product.setState(rs.getInt(rs.getInt(1)));
+            product.setState((rs.getInt(1)));
             product.setBarCode(barcode);
             product.setName(rs.getString(2));
             product.setPriceSale(String.valueOf(rs.getBigDecimal(3)));
@@ -124,6 +151,31 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
+    public int nameExist(String name) {
+        String sql = "SELECT count(*) FROM product WHERE name = ?;";
+        try {
+            conn = DBUtil.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, name);
+            rs = pstmt.executeQuery();
+            rs.next();
+            if (rs.getInt(1) == 0) {
+                System.out.println("商品不存在");
+                return 1;
+            } else{
+                System.out.println("商品存在");
+                return 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("检索库失败");
+            return 2;
+        } finally {
+            DBUtil.closeAll(rs, pstmt, conn);
+        }
+    }
+
+    @Override
     public List<Product> getFullProduct() {
         ArrayList<Product> list = new ArrayList<>();
         String sql = "SELECT * FROM product";
@@ -155,6 +207,34 @@ public class ProductDaoImpl implements ProductDao {
         } finally {
             DBUtil.closeAll(rs, pstmt, conn);
         }
+    }
+
+    @Override
+    public List<DepositoryList.ListsEntity> getRemain() {
+        String sql = "SELECT name,number_product,time_import,number_import  FROM depository";
+        try {
+            conn = DBUtil.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            rs.next();
+            List<DepositoryList.ListsEntity> lists = new ArrayList<>();
+            while (rs.next()) {
+                DepositoryList.ListsEntity listsEntity = new DepositoryList.ListsEntity();
+                listsEntity.setName(rs.getString(1));
+                listsEntity.setImportNo(rs.getInt(4));
+                listsEntity.setProductNo(rs.getInt(2));
+                listsEntity.setImportTime(String.valueOf(rs.getDate(3)));
+                lists.add(listsEntity);
+            }
+            return lists;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            DBUtil.closeAll(rs,pstmt,conn);
+        }
+
+
     }
 
     @Override

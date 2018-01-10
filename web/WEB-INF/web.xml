@@ -18,6 +18,52 @@
         <servlet-name>addproduct</servlet-name>
         <servlet-class>com.tgtiger.AddProduct</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>checkVip</servlet-name>
+        <servlet-class>com.tgtiger.CheckVip</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>getBill</servlet-name>
+        <servlet-class>com.tgtiger.Bill</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>getProduct</servlet-name>
+        <servlet-class>com.tgtiger.GetProduct</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>addWorker</servlet-name>
+        <servlet-class>com.tgtiger.AddWorker</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>addMember</servlet-name>
+        <servlet-class>com.tgtiger.AddMember</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>getMember</servlet-name>
+        <servlet-class>com.tgtiger.GetMember</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>getMemberList</servlet-name>
+        <servlet-class>com.tgtiger.GetMemberList</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>getWorker</servlet-name>
+        <servlet-class>com.tgtiger.GetWorker</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>getWorkerList</servlet-name>
+        <servlet-class>com.tgtiger.GetWorkerList</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>analysis</servlet-name>
+        <servlet-class>com.tgtiger.GetAnalysis</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>importProduct</servlet-name>
+        <servlet-class>com.tgtiger.importProduct</servlet-class>
+    </servlet>
+
+
     <servlet-mapping>
         <servlet-name>login</servlet-name>
         <url-pattern>/servlet/login</url-pattern>
@@ -29,6 +75,50 @@
     <servlet-mapping>
         <servlet-name>addproduct</servlet-name>
         <url-pattern>/servlet/addproduct</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>checkVip</servlet-name>
+        <url-pattern>/servlet/checkvip</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>getBill</servlet-name>
+        <url-pattern>/servlet/getbill</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>getProduct</servlet-name>
+        <url-pattern>/servlet/getproduct</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>addWorker</servlet-name>
+        <url-pattern>/servlet/addworker</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>addMember</servlet-name>
+        <url-pattern>/servlet/addmember</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>getMember</servlet-name>
+        <url-pattern>/servlet/getmember</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>getMemberList</servlet-name>
+        <url-pattern>/servlet/getmemberlist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>getWorker</servlet-name>
+        <url-pattern>/servlet/getworker</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>getWorkerList</servlet-name>
+        <url-pattern>/servlet/getworkerlist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>analysis</servlet-name>
+        <url-pattern>/servlet/getanalysis</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>importProduct</servlet-name>
+        <url-pattern>/servlet/getremain</url-pattern>
     </servlet-mapping>
 
 

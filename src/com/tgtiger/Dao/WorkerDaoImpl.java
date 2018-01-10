@@ -1,9 +1,12 @@
 package com.tgtiger.Dao;
 
 import com.tgtiger.Bean.Worker;
+import com.tgtiger.Bean.WorkerList;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WorkerDaoImpl implements WorkerDao {
 
@@ -12,7 +15,7 @@ public class WorkerDaoImpl implements WorkerDao {
     private ResultSet rs = null;        //用户注册前帐号验证
 
     @Override
-    public boolean usrExist(String phone) {
+    public int usrExist(String phone) {
 
         String sql = "SELECT count(*) FROM worker WHERE phone = ?;";
         try {
@@ -23,15 +26,15 @@ public class WorkerDaoImpl implements WorkerDao {
             rs.next();
             if (rs.getInt(1) == 1) {
                 System.out.println("号码与库中匹配成功");
-                return true;
+                return 1;
             } else {
                 System.out.println("库中未找到相同号码");
-                return false;
+                return 0;
             }
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("检索用户失败");
-            return false;
+            return 2;
         } finally {
             DBUtil.closeAll(rs, pstmt, conn);
         }
@@ -41,7 +44,7 @@ public class WorkerDaoImpl implements WorkerDao {
     @Override
     public boolean addWorkers(Worker worker, int level) {
         //Worker(Phone,Password)
-        String sql = "INSERT INTO worker(worker_number, phone, password, level, date_sign_up) VALUES(?,?,?,?,?);";
+        String sql = "INSERT INTO worker(worker_number, phone, password, level, date_sign_up, name) VALUES(?,?,?,?,?,?);";
 
         try {
             conn = DBUtil.getConnection();
@@ -52,6 +55,7 @@ public class WorkerDaoImpl implements WorkerDao {
             pstmt.setInt(4, level);
             java.util.Date d = new java.util.Date();
             pstmt.setDate(5, new java.sql.Date(d.getTime()));
+            pstmt.setString(6,worker.getName());
             pstmt.execute();
             return true;
         } catch (SQLException e) {
@@ -98,7 +102,7 @@ public class WorkerDaoImpl implements WorkerDao {
             worker.setName(rs.getString(2));
             worker.setLevel(rs.getInt(3));
             worker.setWorkerNo(rs.getString(4));
-            SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             worker.setDateSignUp(format.format(rs.getDate(5)));
             return worker;
         } catch (SQLException e) {
@@ -140,5 +144,33 @@ public class WorkerDaoImpl implements WorkerDao {
             i1=i1/10;
         }
         return String.valueOf(i1);
+    }
+
+    @Override
+    public List<WorkerList.WorkerlistsEntity> getAllWorker() {
+        String sql = "SELECT worker_number,name,phone,date_sign_up,level FROM worker;";
+
+        List<WorkerList.WorkerlistsEntity> list = new ArrayList<>();
+        try {
+            conn = DBUtil.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            while (rs.next()) {
+                WorkerList.WorkerlistsEntity worker = new WorkerList.WorkerlistsEntity();
+                worker.setPhone(rs.getString(3));
+                worker.setWorkerNo(rs.getString(1));
+                worker.setName(rs.getString(2));
+                worker.setDateSignUp(format.format(rs.getDate(4)));
+                worker.setLevel(rs.getInt(5));
+                list.add(worker);
+            }
+            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.closeAll(rs,pstmt,conn);
+        }
+        return list;
     }
 }

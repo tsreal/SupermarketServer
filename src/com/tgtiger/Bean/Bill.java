@@ -20,6 +20,11 @@ public class Bill {
      */
     private List<BillsEntity> bills;
     private boolean vip;
+    /**
+     * memberNo : 13234134
+     */
+    private String memberNo;
+
 
     public void setBills(List<BillsEntity> bills) {
         this.bills = bills;
@@ -35,6 +40,14 @@ public class Bill {
 
     public boolean isVip() {
         return vip;
+    }
+
+    public void setMemberNo(String memberNo) {
+        this.memberNo = memberNo;
+    }
+
+    public String getMemberNo() {
+        return memberNo;
     }
 
     public class BillsEntity {

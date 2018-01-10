@@ -36,22 +36,30 @@ public class AddProduct extends HttpServlet {
      */
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setCharacterEncoding("UTF-8");
         req.setCharacterEncoding("UTF-8");
         PrintWriter out = resp.getWriter();
 
-        String receive = IOUtils.toString(req.getInputStream(), "UTF-8");
-        Product product_receive = JSON.parseObject(receive, Product.class);
         JSONObject json = new JSONObject();
+        String receive = IOUtils.toString(req.getInputStream(), "UTF-8");
+        JSONObject json_rec = JSON.parseObject(receive);
+        Product product_receive = json_rec.getObject("product", Product.class);
         Product produ;
-        if ((produ = (new ProductDaoImpl()).addProduct(product_receive)).getYes() == 1) {
-            json.put("task", true);
-            json.put("info", "商品添加成功");
-            json.put("barCode", produ.getBarCode());
-        } else {
-            json.put("task", false);
+        if (new ProductDaoImpl().nameExist(product_receive.getName())==0) {
+            json.put("info", "商品已存在,请检查输入");
+            System.out.println(json.getString("info"));
+        }else {
+            if ((produ = new ProductDaoImpl().addProduct(product_receive)).getYes()==1) {
+                json.put("barCode", produ.getBarCode());
+                json.put("info","添加成功");
+            } else {
+                json.put("info","商品添加失败,请检查服务端");
+                System.out.println(json.getString("info"));
+            }
         }
+
+
         out.print(json.toString());
         out.flush();
         out.close();

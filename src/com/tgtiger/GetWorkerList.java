@@ -1,8 +1,8 @@
 package com.tgtiger;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tgtiger.Bean.DepositoryList;
-import com.tgtiger.Dao.ProductDaoImpl;
+import com.tgtiger.Bean.WorkerList;
+import com.tgtiger.Dao.WorkerDaoImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-public class importProduct extends HttpServlet {
+public class GetWorkerList extends HttpServlet{
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -22,18 +22,12 @@ public class importProduct extends HttpServlet {
 
 
 
-        List<DepositoryList.ListsEntity> list = new ProductDaoImpl().getRemain();
-        if (list != null) {
-            json.put("lists", list);
-            json.put("status", true);
-        } else {
-            json.put("status", false);
-        }
-
-
-
+        List<WorkerList.WorkerlistsEntity> list = new WorkerDaoImpl().getAllWorker();
+        json.put("workerlists", list);
+        json.put("task", true);
         out.print(json.toString());
         out.flush();
         out.close();
+
     }
 }

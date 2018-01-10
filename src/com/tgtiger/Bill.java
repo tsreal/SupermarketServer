@@ -33,33 +33,39 @@ public class Bill extends HttpServlet {
 
         JSONObject json = new JSONObject();
         String receive = IOUtils.toString(req.getInputStream(), "UTF-8");
+        System.out.println("receive:"+receive);
         com.tgtiger.Bean.Bill bills_rec = JSON.parseObject(receive, com.tgtiger.Bean.Bill.class);
         int i = new StatementDaoImpl().getBill(bills_rec);
         if (i == 0) {
 
             json.put("task", true);
             json.put("status", 0);
+            json.put("info", "结账success!");
         } else if (i == 1) {
             json.put("task", false);
             json.put("status", 1);
-            json.put("info","error1: update statement vip error");
+            json.put("info","error1:更新vip订单错误");
         } else if (i == 2) {
             json.put("task", false);
             json.put("status", 2);
-            json.put("info","error2: update statement normal error");
+            json.put("info","error2: 更新普通订单错误");
         } else if (i == 3) {
             json.put("task", false);
             json.put("status", 3);
-            json.put("info","error3: insert statement error");
+            json.put("info","error3: 插入订单错误");
         } else if (i == 4) {
             json.put("task", false);
             json.put("status", 4);
-            json.put("info","error4: update depository error");
+            json.put("info","error4: 更新仓库错误");
 
+        } else if (i == 6) {
+            json.put("task", false);
+            json.put("status", 6);
+            json.put("info", "会员更新账单失败！");
         } else {
             json.put("task", false);
             json.put("status", 5);
-            json.put("info","检查代码");
+            json.put("info", "请检查代码");
         }
         out.print(json.toString());
         out.flush();

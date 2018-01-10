@@ -26,8 +26,7 @@ public class SignUp extends HttpServlet{
         WorkerDao workerDao = new WorkerDaoImpl();
         JSONObject json = new JSONObject();
         System.out.println("addWorker...");
-        if (workerDao.usrExist(worker_rec.getPhone())) {
-
+        if (workerDao.usrExist(worker_rec.getPhone()) == 1) {
             json.put("info", "该手机号已注册.请重新输入新手机号.");
             json.put("task", false);
             json.put("status", 1);

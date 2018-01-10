@@ -6,10 +6,15 @@ public class Member {
     private String memberNo;
     private String dateSignUp;
     private String phone;
+
     /**
      * expire : false
      */
     private boolean expire;
+    /**
+     * bill : 3242
+     */
+    private String bill;
 
     public String getName() {
         return name;
@@ -49,5 +54,13 @@ public class Member {
 
     public boolean isExpire() {
         return expire;
+    }
+
+    public void setBill(String bill) {
+        this.bill = bill;
+    }
+
+    public String getBill() {
+        return bill;
     }
 }

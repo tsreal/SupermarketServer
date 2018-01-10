@@ -3,6 +3,7 @@ package com.tgtiger;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tgtiger.Bean.Statement;
+import com.tgtiger.Bean.StatementList;
 import com.tgtiger.Dao.StatementDaoImpl;
 import org.apache.commons.io.IOUtils;
 
@@ -53,11 +54,9 @@ apple 22       11
         int status = json_rec.getInteger("status");
         try {
             Date date = new SimpleDateFormat("yyyy-MM-dd").parse(json_rec.getString("date"));
-            List<Statement> list = new StatementDaoImpl().getAnalysis(status, date);
-            json.put("Productlist", list);
-            json.put("task", true);
+            List<StatementList.ListsEntity> list = new StatementDaoImpl().getAnalysis(status, date);
+            json.put("lists", list);
             json.put("status", 0);
-            json.put("info","产品列表接受成功");
 
 
 

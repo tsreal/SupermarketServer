@@ -1,5 +1,6 @@
 package com.tgtiger.Dao;
 
+import com.tgtiger.Bean.DepositoryList;
 import com.tgtiger.Bean.Product;
 
 import java.util.List;
@@ -15,10 +16,12 @@ public interface ProductDao {
 
     int productExist(String barcode);
 
+    int nameExist(String name);
+
 
     List<Product> getFullProduct();
 
-
+    List<DepositoryList.ListsEntity> getRemain();
 
     //生成条形码
     String genBarCodes();

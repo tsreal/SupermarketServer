@@ -3,7 +3,6 @@ package com.tgtiger;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tgtiger.Bean.Worker;
-import com.tgtiger.Dao.WorkerDao;
 import com.tgtiger.Dao.WorkerDaoImpl;
 import org.apache.commons.io.IOUtils;
 
@@ -14,46 +13,47 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class Login extends HttpServlet {
+public class AddWorker extends HttpServlet{
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
-        //字符流
         PrintWriter out = resp.getWriter();
-        JSONObject json = new JSONObject();
-        String receive = IOUtils.toString(req.getInputStream(),"UTF-8");
-        Worker worker_rec = JSON.parseObject(receive, Worker.class);
-        WorkerDao dao = new WorkerDaoImpl();
 
-        if (dao.usrExist(worker_rec.getPhone()) == 1) {
-            if (dao.getPassword(worker_rec.getPhone()).equals(worker_rec.getPassword())) {
-                System.out.println("密码匹配成功");
-                Worker worker = dao.getWorkerInfo(worker_rec.getPhone());
-                json.put("name", worker.getName());
-                json.put("level", worker.getLevel());
-                json.put("workerNo", worker.getWorkerNo());
-                json.put("info", "验证登录成功");
+        JSONObject json = new JSONObject();
+
+
+
+        String receive = IOUtils.toString(req.getInputStream(), "UTF-8");
+        Worker worker_rec = JSON.parseObject(receive, Worker.class);
+        int j = new WorkerDaoImpl().usrExist(worker_rec.getPhone());
+        if (j == 1) {
+            json.put("info","该手机号已注册,添加失败");
+            json.put("task", false);
+            json.put("workerNo",new WorkerDaoImpl().getWorkerInfo(worker_rec.getPhone()).getWorkerNo());
+            json.put("status",1);
+        } else if (j == 0) {
+            boolean i = new WorkerDaoImpl().addWorkers(worker_rec, worker_rec.getLevel());
+            if (i) {
                 json.put("task", true);
-                json.put("status",0);
+                json.put("info", "人员添加成功");
+                json.put("workerNo", new WorkerDaoImpl().getWorkerInfo(worker_rec.getPhone()).getWorkerNo());
+                json.put("status", 0);
+
             } else {
-                json.put("info", "请检查你的密码");
                 json.put("task", false);
-                json.put("status", 1);
+                json.put("status", 2);
+                json.put("info", "addMember(*) error: 检查服务端");
             }
         } else {
-            json.put("info","帐号不存在,请先注册");
+
             json.put("task", false);
-            json.put("status", 2);
+            json.put("info", "usrExist() errord. 检索用户失败");
+            json.put("status", 3);
         }
-
-
-
         out.print(json.toString());
         out.flush();
         out.close();
-
-
-
     }
 }

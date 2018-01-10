@@ -1,8 +1,11 @@
 package com.tgtiger;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.tgtiger.Bean.DepositoryList;
-import com.tgtiger.Dao.ProductDaoImpl;
+import com.tgtiger.Bean.Member;
+import com.tgtiger.Bean.MemberList;
+import com.tgtiger.Dao.MemberDaoImpl;
+import org.apache.commons.io.IOUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,9 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
 import java.util.List;
 
-public class importProduct extends HttpServlet {
+public class GetMemberList extends HttpServlet{
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -22,14 +26,9 @@ public class importProduct extends HttpServlet {
 
 
 
-        List<DepositoryList.ListsEntity> list = new ProductDaoImpl().getRemain();
-        if (list != null) {
-            json.put("lists", list);
-            json.put("status", true);
-        } else {
-            json.put("status", false);
-        }
-
+        List<MemberList.MemlistsEntity> list = new MemberDaoImpl().getMemberList();
+        json.put("memlists", list);
+        json.put("task", true);
 
 
         out.print(json.toString());

@@ -1,7 +1,7 @@
 package com.tgtiger.Dao;
 
 import com.tgtiger.Bean.Bill;
-import com.tgtiger.Bean.Statement;
+import com.tgtiger.Bean.StatementList;
 
 import java.util.Date;
 import java.util.List;
@@ -13,6 +13,6 @@ public interface StatementDao {
 
     boolean updateIncome(String barcode, Date date);
 
-    List<Statement> getAnalysis(int status, Date date);
+    List<StatementList.ListsEntity> getAnalysis(int status, Date date);
 
 }

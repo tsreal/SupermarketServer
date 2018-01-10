@@ -31,16 +31,16 @@ public class CheckVip extends HttpServlet{
             int j = new MemberDaoImpl().memExpire(memberNo_rec);
             //会员过期检测,1过期，0未过期，2检索失败
             if (j == 1) {
-                json.put("info", "会员号与库中匹配成功,但已过期");
+                json.put("info", "已过期!");
                 json.put("task", false);
                 json.put("status", 1);
             } else {
-                json.put("info", "会员存在，可折扣");
+                json.put("info", "The Vip card Exists!");
                 json.put("task", true);
                 json.put("status", 0);
             }
         } else if (i == 0) {
-            json.put("info", "会员不存在");
+            json.put("info", "The number is error!");
             json.put("task", false);
             json.put("status", 2);
         } else {

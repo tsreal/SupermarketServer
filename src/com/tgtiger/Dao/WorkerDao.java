@@ -1,9 +1,12 @@
 package com.tgtiger.Dao;
 
 import com.tgtiger.Bean.Worker;
+import com.tgtiger.Bean.WorkerList;
+
+import java.util.List;
 
 public interface WorkerDao {
-    boolean usrExist(String phone);
+    int usrExist(String phone);
 
     boolean addWorkers(Worker worker, int level);
 
@@ -22,4 +25,6 @@ public interface WorkerDao {
     int getLevel(String phone);
 
     String genWorkerNo();
+
+    List<WorkerList.WorkerlistsEntity> getAllWorker();
 }

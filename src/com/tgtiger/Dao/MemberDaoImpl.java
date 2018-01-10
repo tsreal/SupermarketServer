@@ -1,12 +1,16 @@
 package com.tgtiger.Dao;
 
 import com.tgtiger.Bean.Member;
+import com.tgtiger.Bean.MemberList;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MemberDaoImpl implements MemberDao {
     private Connection conn = null;
@@ -92,11 +96,10 @@ public class MemberDaoImpl implements MemberDao {
     public boolean addMember(Member member) {
         String sql = "INSERT INTO member(number_member, name, phone, date_sign_up,expire) VALUES(?,?,?,?,FALSE );";
 
+        String memberNo = genMemberNo();
         try {
             conn = DBUtil.getConnection();
             pstmt = conn.prepareStatement(sql);
-            String memberNo = genMemberNo();
-            member.setMemberNo(memberNo);
             pstmt.setString(1, memberNo);
             pstmt.setString(2, member.getName());
             pstmt.setString(3, member.getPhone());
@@ -107,12 +110,14 @@ public class MemberDaoImpl implements MemberDao {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }finally {
+            DBUtil.closeAll(rs,pstmt,conn);
         }
     }
 
     @Override
     public Member getMemberInfo(String phone) {
-        String sql = "SELECT phone,number_member,name,date_sign_up,expire FROM member WHERE phone = ?";
+        String sql = "SELECT phone,number_member,name,date_sign_up,expire,bill FROM member WHERE phone = ?";
         try {
             Member member = new Member();
             conn = DBUtil.getConnection();
@@ -126,6 +131,7 @@ public class MemberDaoImpl implements MemberDao {
             member.setExpire(rs.getBoolean(5));
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             member.setDateSignUp(format.format(rs.getDate(4)));
+            member.setBill(String.valueOf(rs.getBigDecimal(6)));
             return member;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -133,6 +139,53 @@ public class MemberDaoImpl implements MemberDao {
         } finally {
             DBUtil.closeAll(rs, pstmt, conn);
         }
+    }
+
+    @Override
+    public boolean updateMemberBill(Double total,String memberNo) {
+        String sql = "UPDATE member SET bill=bill+? WHERE number_member=?";
+        try {
+            conn = DBUtil.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setBigDecimal(1, new BigDecimal(total));
+            pstmt.setString(2,memberNo);
+            pstmt.execute();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            DBUtil.closeAll(rs,pstmt,conn);
+        }
+    }
+
+    @Override
+    public List<MemberList.MemlistsEntity> getMemberList() {
+        String sql = "SELECT number_member,name,phone,date_sign_up,expire,bill FROM member;";
+
+        List<MemberList.MemlistsEntity> list = new ArrayList<>();
+        try {
+            conn = DBUtil.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            while (rs.next()) {
+                MemberList.MemlistsEntity member = new MemberList.MemlistsEntity();
+                member.setPhone(rs.getString(3));
+                member.setMemberNo(rs.getString(1));
+                member.setName(rs.getString(2));
+                member.setDateSignUp(format.format(rs.getDate(4)));
+                member.setExpire(rs.getBoolean(5));
+                member.setBill(String.valueOf(rs.getBigDecimal(6)));
+                list.add(member);
+            }
+            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.closeAll(rs,pstmt,conn);
+        }
+        return list;
     }
 
     @Override
